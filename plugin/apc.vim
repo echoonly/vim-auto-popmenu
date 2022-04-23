@@ -117,12 +117,14 @@ function! s:apc_enable()
 					\ pumvisible()? "\<c-p>" : "\<s-tab>"
 		let b:apc_init_tab = 1
 	endif
-	if get(g:, 'apc_cr_confirm', 0) == 0
-		inoremap <silent><buffer><expr> <cr> 
-					\ pumvisible()? "\<c-y>\<cr>" : "\<cr>"
-	else
-		inoremap <silent><buffer><expr> <cr> 
-					\ pumvisible()? "\<c-y>" : "\<cr>"
+	if get(g:, 'apc_disable_cr', 0) == 0
+		if get(g:, 'apc_cr_confirm', 0) == 0
+			inoremap <silent><buffer><expr> <cr> 
+						\ pumvisible()? "\<c-y>\<cr>" : "\<cr>"
+		else
+			inoremap <silent><buffer><expr> <cr> 
+						\ pumvisible()? "\<c-y>" : "\<cr>"
+		endif
 	endif
 	inoremap <silent><buffer><expr> <bs> <SID>on_backspace()
 	let b:apc_init_bs = 1
@@ -146,8 +148,10 @@ function! s:apc_disable()
 	if get(b:, 'apc_init_bs', 0)
 		silent! iunmap <buffer><expr> <bs>
 	endif
-	if get(b:, 'apc_init_cr', 0)
-		silent! iunmap <buffer><expr> <cr>
+	if get(g:, 'apc_disable_cr', 0) == 0
+		if get(b:, 'apc_init_cr', 0)
+			silent! iunmap <buffer><expr> <cr>
+		endif
 	endif
 	if get(b:, 'apc_save_infer', '') != ''
 		let &l:infercase = b:apc_save_infer
